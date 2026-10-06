@@ -1,0 +1,27 @@
+name: CI/CD Pipeline - Banco XYZ
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Obtener codigo del repositorio
+        uses: actions/checkout@v3
+
+      - name: 2. Configurar Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 3. Validar archivo docker-compose
+        run: docker compose config
+
+      - name: 4. Simular compilacion de microservicios
+        run: echo "Validacion de integracion continua finalizada exitosamente."

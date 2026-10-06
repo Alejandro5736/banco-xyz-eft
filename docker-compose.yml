@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway-server:
+    build: ./gateway-server
+    container_name: gateway-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  bff-web:
+    build: ./bff-web
+    container_name: bff-web
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  bff-mobile:
+    build: ./bff-mobile
+    container_name: bff-mobile
+    ports:
+      - "8082:8082"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  bff-atm:
+    build: ./bff-atm
+    container_name: bff-atm
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  ms-clientes:
+    build: ./ms-clientes
+    container_name: ms-clientes
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  ms-cuentas:
+    build: ./ms-cuentas
+    container_name: ms-cuentas
+    ports:
+      - "8085:8085"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  ms-pagos:
+    build: ./ms-pagos
+    container_name: ms-pagos
+    ports:
+      - "8086:8086"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+  ms-batch:
+    build: ./ms-batch
+    container_name: ms-batch
+    ports:
+      - "8087:8087"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
